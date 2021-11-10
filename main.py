@@ -60,6 +60,46 @@ def locate_card2(cards, query):
         # check if we searched all the cards
     return -1
 
+def binary_search(lo, hi, condition):
+    """
+    Binary search will search through values to locate condition with O(log(n)) if it is sorted.
+
+    :param lo: low index domain search
+    :param hi: high index domain search
+    :param condition: is what we need to find
+    :return: -1 if did not find condition
+    """
+
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        result = condition(mid)
+        if result == 'found':
+            return mid
+        elif result == 'left':
+            hi = mid - 1
+        else:
+            lo = mid + 1
+
+    return -1
+
+
+# refactored for binary search
+def locate_card3(cards, query):
+
+    # define condition to use with binary search
+    def condition(mid):
+        if cards[mid] == query:
+            if mid > 0 and cards[mid-1] == query:
+                return 'left'
+            else:
+                return 'found'
+        elif cards[mid] < query:
+            return 'left'
+        else:
+            return 'right'
+
+    return binary_search(0, len(cards) - 1, condition)
+
 cards = [13, 11, 10, 7, 4, 3, 1, 0]
 query = 7
 output = 3
@@ -127,14 +167,13 @@ tests.append({
 
 
 
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # ** with dictionary takes the dictionary and testes it the way you type (test['input']['cards'], test['input']['query']) == test['output']
     result = locate_card(**test['input']) == test['output']
 
 
-    print(evaluate_test_cases(locate_card2, tests))
+    print(evaluate_test_cases(locate_card3, tests))
 
     large_test = {
         'input': {
@@ -143,6 +182,6 @@ if __name__ == '__main__':
         },
         'output': 9999998
     }
-    result, passed, runtime = evaluate_test_case(locate_card, large_test, display=False)
-    print("Result: {}\n\033[1;30;42mPASSED\033[0m: {}\nExecution Time: {} ms".format(result, passed, runtime))
+    # result, passed, runtime = evaluate_test_case(locate_card, large_test, display=False)
+    # print("Result: {}\n\033[1;30;42mPASSED\033[0m: {}\nExecution Time: {} ms".format(result, passed, runtime))
 
